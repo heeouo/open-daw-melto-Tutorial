@@ -6,7 +6,8 @@ import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/open-daw-melto-Daw"></BrowserRouter>
-    <App />
+    <BrowserRouter basename="/open-daw-melto-Daw">
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 )
