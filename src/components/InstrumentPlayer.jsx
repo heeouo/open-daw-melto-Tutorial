@@ -27,7 +27,7 @@ export default function InstrumentPlayer() {
           const name = `${noteNames[abs % 12]}${Math.floor(abs / 12)}`;
           urls[name] = name.replace('#','s') + '.mp3';
         });
-        inst = new Tone.Sampler({ urls, baseUrl: '/samples/pianos/', release: 1 }).toDestination();
+        inst = new Tone.Sampler({ urls, baseUrl: '/open-daw-melto-Daw/samples/pianos/', release: 1 }).toDestination();
       } else {
         // 드럼 샘플 맵
         const urls = {};
@@ -35,7 +35,7 @@ export default function InstrumentPlayer() {
           const name = drumNames[idx];
           urls[name] = name + '.mp3';
         });
-        inst = new Tone.Players(urls, { baseUrl: '/samples/drums/' }).toDestination();
+        inst = new Tone.Players(urls, { baseUrl: '/open-daw-melto-Daw/samples/drums/' }).toDestination();
       }
       setSampler(inst);
     };
