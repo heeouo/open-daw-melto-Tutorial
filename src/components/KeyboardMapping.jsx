@@ -45,7 +45,7 @@ const keyToNote = Object.fromEntries(
 export default function KeyboardMapping() {
   return (
     <div className="flex justify-center"> 
-      <div className="grid grid-cols-7 gap-[2px] pt-[40px] min-w-[500px]">
+      <div className="grid grid-cols-7 gap-[2px] pt-[40px] min-w-[400px] grid-rows-[min-content_auto_auto_min-content]">
         {Object.entries(keyToNote).map(([key, note]) => (
           <div
             key={key}

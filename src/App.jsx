@@ -116,8 +116,7 @@ function App() {
 
   return (
     <div className="min-h-screen min-w-screen mx-auto bg-[#F0F5F3]"> {/* min-w-[1897px] 스크롤바 없애려고 이렇게 넣고 싶은데, 그러면 화면 고정되어서 일단 제외*/}
-      <div className="w-full min-h-screen grid grid-cols-3 grid-rows-[min-content_1fr_1fr_1fr_min-content] gap-[12px]">
-
+      <div className="w-full min-h-screen grid grid-cols-3 grid-rows-[min-content_auto_auto_min-content] gap-[15px]">
 
         <header className="col-span-3 bg-[#FCFBF4] shadow rounded-md p-[8px_16px]">
           <div className="flex justify-between items-center">
@@ -147,27 +146,27 @@ function App() {
           </div>
         </header>
 
-        <section className="col-span-1 bg-gray-50 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
-          <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">🎵 
+        <section className="col-start-1 row-start-2 bg-gray-50 border-1 border-[#3BA99C] rounded-[20px] mb-[10px] p-[8px]">
+          <h2 className="text-[20px] font-bold mb-[5px] border-b border-[#3BA99C] mt-[0px] pb-[5px] text-center">🎵 
             <span className="ml-2">악기 선택</span>
           </h2>
           <InstrumentPlayer />
         </section>
 
-        <section className="col-span-2 row-span-2 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
-          <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">🎧트랙 편집</h2>
+        <section className="col-span-2 row-span-2 border-1 border-[#3BA99C] rounded-[20px] p-[8px] max-h-[500px] overflow-auto">
+          <h2 className="text-[20px] font-bold mb-[5px] border-b border-[#3BA99C] mt-[0px] pb-[5px] text-center">🎧트랙 편집</h2>
           <TrackEditor recordedUrl={recordedUrl} />
         </section>
 
-        <section className="col-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px] min-h-[180px]">
-          <h2 className="text-xl font-bold mb-2 border-b border-[#3BA99C] pb-[5px] text-center">
+        <section className="col-start-1 row-start-3 border-1 border-[#3BA99C] rounded-[20px] p-[8px] max-h-[150px]">
+          <h2 className="text-[20px] font-bold mb-[5px] border-b border-[#3BA99C] mt-[0px] pb-[5px] text-center">
              <span className="ml-2">🎙️녹음 / 재생</span>
           </h2>
           <RecorderControls onRecordComplete={url => setRecordedUrl(url)} />
         </section>
 
-        <section className="col-span-1 row-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
-          <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">🎓튜토리얼</h2>
+        <section className="col-start-1 row-start-4 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
+          <h2 className="text-[20px] font-bold mb-[5px] border-b border-[#3BA99C] mt-[0px] pb-[5px] text-center">🎓튜토리얼</h2>
           
           {/* 튜토리얼 시작 버튼 */}
           {!showTutorial && (
@@ -184,7 +183,7 @@ function App() {
         </section>
 
         <section className="col-span-1 bg-gray-50 border-1 border-[#3BA99C] rounded-[20px] p-[8px] hover:scale-[1.01] hover:shadow-xl transition-all duration-300">
-          <h2 className="text-xl font-bold mb-[6px] border-b border-[#3BA99C] pb-[5px] text-center">
+          <h2 className="text-[20px] font-bold mb-[5px] border-b border-[#3BA99C] mt-[0px] pb-[5px] text-center">
             <span className="ml-2">⌨️ 키보드 매핑 안내</span>
           </h2>
           <KeyboardMapping />

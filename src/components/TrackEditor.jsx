@@ -261,23 +261,23 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
 
   //Audio 저장
   useEffect(() => {
-  const refs = {};
-  tracks.forEach(track => {
-    refs[track.id] = track.clips.map(clip => new Audio(clip.url));
-  });
-  audioRefs.current = refs;
-}, [tracks]);
+    const refs = {};
+    tracks.forEach(track => {
+      refs[track.id] = track.clips.map(clip => new Audio(clip.url));
+    });
+    audioRefs.current = refs;
+  }, [tracks]);
 
   //트랙 전체 재생
   const playTrack = (trackId) => {
-  const audios = audioRefs.current[trackId];
-  if (!audios) return;
+    const audios = audioRefs.current[trackId];
+    if (!audios) return;
 
-  audios.forEach(audio => {
-    audio.currentTime = 0; // 처음부터 재생
-    audio.play();
-  });
-};
+    audios.forEach(audio => {
+      audio.currentTime = 0; // 처음부터 재생
+      audio.play();
+    });
+  };
 
   // 트랙 추가
   const addTrack = () => {
