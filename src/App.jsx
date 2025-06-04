@@ -108,9 +108,11 @@ import InstrumentPlayer from './components/InstrumentPlayer';
 import RecorderControls from './components/RecorderControls';
 import KeyboardMapping from './components/KeyboardMapping';
 import TrackEditor from './components/TrackEditor';
+import TutorialProgram from './components/TutorialProgram';
 
 function App() {
   const [recordedUrl, setRecordedUrl] = useState(null);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   return (
     <div className="min-h-screen min-w-screen mx-auto bg-[#F0F5F3]"> {/* min-w-[1897px] 스크롤바 없애려고 이렇게 넣고 싶은데, 그러면 화면 고정되어서 일단 제외*/}
@@ -152,9 +154,26 @@ function App() {
           <InstrumentPlayer />
         </section>
 
-        <section className="col-span-2 row-span-3 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
+        <section className="col-span-2 row-span-2 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
           <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">🎧트랙 편집</h2>
           <TrackEditor recordedUrl={recordedUrl} />
+        </section>
+
+        <section className="col-span-2 row-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
+          <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">튜토리얼</h2>
+          
+          {/* 튜토리얼 시작 버튼 */}
+          {!showTutorial && (
+            <button
+              onClick={() => setShowTutorial(true)}
+              className="bg-yellow-400 text-black px-4 py-2 rounded shadow"
+            >
+              튜토리얼 시작
+            </button>
+          )}
+
+          {/* 튜토리얼 박스 */}
+          {showTutorial && <TutorialProgram />}
         </section>
 
         <section className="col-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px] min-h-[180px]">
