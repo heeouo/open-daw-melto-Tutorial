@@ -159,8 +159,15 @@ function App() {
           <TrackEditor recordedUrl={recordedUrl} />
         </section>
 
-        <section className="col-span-2 row-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
-          <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">튜토리얼</h2>
+        <section className="col-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px] min-h-[180px]">
+          <h2 className="text-xl font-bold mb-2 border-b border-[#3BA99C] pb-[5px] text-center">
+             <span className="ml-2">🎙️녹음 / 재생</span>
+          </h2>
+          <RecorderControls onRecordComplete={url => setRecordedUrl(url)} />
+        </section>
+
+        <section className="col-span-1 row-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px]">
+          <h2 className="text-xl font-bold mb-[5px] border-b border-[#3BA99C] pb-[5px] text-center">🎓튜토리얼</h2>
           
           {/* 튜토리얼 시작 버튼 */}
           {!showTutorial && (
@@ -174,13 +181,6 @@ function App() {
 
           {/* 튜토리얼 박스 */}
           {showTutorial && <TutorialProgram />}
-        </section>
-
-        <section className="col-span-1 border-1 border-[#3BA99C] rounded-[20px] p-[8px] min-h-[180px]">
-          <h2 className="text-xl font-bold mb-2 border-b border-[#3BA99C] pb-[5px] text-center">
-             <span className="ml-2">🎙️녹음 / 재생</span>
-          </h2>
-          <RecorderControls onRecordComplete={url => setRecordedUrl(url)} />
         </section>
 
         <section className="col-span-1 bg-gray-50 border-1 border-[#3BA99C] rounded-[20px] p-[8px] hover:scale-[1.01] hover:shadow-xl transition-all duration-300">

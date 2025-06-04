@@ -68,16 +68,16 @@ export default function InstrumentPlayer() {
   }, [instrument, octave, sampler]);
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex space-x-4">
-        <button id="pianoButton" onClick={() => setInstrument('piano')} className={instrument==='piano'? 'px-4 py-2 bg-blue-500 text-white rounded':'px-4 py-2 bg-gray-200 rounded'}>Piano</button>
-        <button onClick={() => setInstrument('drum')} className={instrument==='drum'? 'px-4 py-2 bg-green-500 text-white rounded':'px-4 py-2 bg-gray-200 rounded'}>Drum</button>
+    <div className="p-[4px] space-y-[4px]">
+      <div className="flex space-x-[10px]">
+        <button id="pianoButton" onClick={() => setInstrument('piano')} className={instrument==='piano'? 'px-[20px] py-[10px] bg-[#b8f5f4] text-white rounded':'px-[20px] py-[10px] bg-[#fcfcf7] rounded'}>Piano</button>
+        <button onClick={() => setInstrument('drum')} className={instrument==='drum'? 'px-[20px] py-[10px] bg-[#b8f5f4] text-white rounded':'px-[20px] py-[10px] bg-[#fcfcf7] rounded'}>Drum</button>
       </div>
       {instrument === 'piano' && (
-        <div className="flex items-center space-x-2">
-          <button onClick={() => setOctave(o => Math.max(0, o-1))} disabled={octave<=0} className="px-2 py-1 bg-gray-300 rounded">Octave Down</button>
+        <div className="flex items-center space-x-[5px]">
+          <button onClick={() => setOctave(o => Math.max(0, o-1))} disabled={octave<=0} className="px-[20px] py-[10px] bg-[#fcfcf7] rounded">Octave Down</button>
           <span>Octave: {octave}</span>
-          <button id="OctaveUp" onClick={() => setOctave(o => Math.min(7, o+1))} disabled={octave>=7} className="px-2 py-1 bg-gray-300 rounded">Octave Up</button>
+          <button id="OctaveUp" onClick={() => setOctave(o => Math.min(7, o+1))} disabled={octave>=7} className="px-[20px] py-[10px] bg-[#fcfcf7] rounded">Octave Up</button>
         </div>
       )}
       <p>현재 선택된 악기: <strong>{instrument}</strong>{instrument==='piano' && `, 옥타브: ${octave}`}</p>

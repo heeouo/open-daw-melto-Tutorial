@@ -323,22 +323,22 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <button
+    <div className="p-[10px] space-y-[7px]">
+      <button id="addTrackButton"
         onClick={addTrack}
-        className="px-3 py-1 bg-blue-600 text-white rounded shadow"
+        className="px-[30px] py-[10px] bg-blue-600 text-white rounded shadow"
         >
         Add Track
       </button>
 
       {tracks.map(track => (
-        <div key={track.id} className="border rounded p-3 space-y-2">
-          <div className="flex items-center space-x-2">
+        <div key={track.id} className="border border-[#3BA99C] rounded-[10px] p-[3px] space-y-[2px]">
+          <div className="flex items-center space-x-[2px]">
 
             <button
               id= "PlayButton"
               onClick={() => playTrack(track.id)}
-              className="px-2 py-1 bg-purple-600 text-white rounded"
+              className="px-[20px] py-1 bg-purple-600 text-white rounded"
             >
               ▶ Play Track
             </button>
@@ -361,12 +361,12 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
             </button>
             <button id = "LoofButton"
               onClick={() => toggleLoop(track.id)}
-              className={`px-2 py-1 rounded ${track.loop ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
+              className={`px-2 py-1 rounded ${track.loop ? 'bg-[#b8f5f4] text-white' : 'bg-gray-200'}`}
             >
               {track.loop ? 'Loop On' : 'Loop Off'}
             </button>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 ">
               <label>Volume:</label>
               <input
                 type="range"
@@ -379,11 +379,11 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
             </div>
           </div>
 
-          <div className="relative h-12 border bg-gray-100">
+          <div className="relative h-[0px] border border-[#3BA99C]">
             {track.clips.map(clip => (
               <div
                 key={clip.id}
-                className="absolute top-0 h-full bg-blue-400 opacity-75 rounded"
+                className="absolute top-0 h-full opacity-75 rounded"
                 style={{
                   left: `${(clip.start / timelineDuration) * 100}%`,
                   width: `${(clip.duration / timelineDuration) * 100}%`,

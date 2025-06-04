@@ -44,16 +44,18 @@ const keyToNote = Object.fromEntries(
 
 export default function KeyboardMapping() {
   return (
-    <div className="grid grid-cols-7 gap-2 p-4">
-      {Object.entries(keyToNote).map(([key, note]) => (
-        <div
-          key={key}
-          className="flex flex-col items-center justify-center border rounded-lg p-2 bg-white shadow"
-        >
-          <span className="text-lg font-mono">{key}</span>
-          <span className="text-sm text-gray-600">{note}</span>
-        </div>
-      ))}
+    <div className="flex justify-center"> 
+      <div className="grid grid-cols-7 gap-[2px] pt-[40px] min-w-[500px]">
+        {Object.entries(keyToNote).map(([key, note]) => (
+          <div
+            key={key}
+            className="flex flex-col items-center justify-center border rounded-[10px] p-[2px] bg-[#ffffff] shadow"
+          >
+            <span className="text-[18px] font-mono">{key}</span>
+            <span className="text-[14px] text-gray-600">{note}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
