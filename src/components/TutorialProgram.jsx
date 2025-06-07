@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function TutorialProgram() {
   const tutorialSteps = [
-    { message: "1단계: 피아노를 선택해 보세요.", triggerId: "pianoButton" },
+    { message: "1단계: 악기를 선택하고 연주해 보세요.", triggerId: "pianoButton" },
     { message: "2단계: 옥타브를 한 단계 올려보세요.", triggerId: "OctaveUp" },
     { message: "3단계: 녹음 버튼을 눌러보세요.", triggerId: "recordButton" },
     { message: "4단계: 키보드를 통해 d-s-a-s-d-d-d 순서대로 눌러보세요.", triggerId: null }, // triggerId 없음
@@ -10,8 +10,10 @@ export default function TutorialProgram() {
     { message: "6단계: 트랙을 추가해 보세요", triggerId: "addTrackButton" },
     { message: "7단계: + 버튼 눌러 해당 음악을 추가해보세요.", triggerId: "addInstrumentButton" },
     { message: "8단계: Play Track버튼 눌러 해당 트랙을 들을 수 있습니다", triggerId: "PlayButton" },
-    { message: "9단계: Loop Off를 On으로 바꾸면 해당 음악이 반복됩니다.", triggerId: "LoofButton" },
-    { message: "10단계: 마지막으로 삭제 버튼을 통해 해당 트랙을 삭제할 수 있습니다.", triggerId: "DeleteButton" },
+    { message: "9단계: Loop Off를 On으로 바꾸면 해당 음악이 반복됩니다.", triggerId: "LoopButton" },
+    { message: "10단계: 믹스다운 버튼을 눌러 같은 트랙의 음원을 하나의 음원으로 만들 수 있습니다.", triggerId: "MixDownButton" },
+    { message: "11단계: 믹스다운된 음원은 ⋮를 통해 .wav 파일로 다운로드 가능합니다.", triggerId: null },
+    { message: "12단계: 마지막으로 삭제 버튼을 통해 해당 트랙을 삭제할 수 있습니다.", triggerId: "DeleteButton" },
     { message: "튜토리얼이 완료 되었습니다! 키보드 매핑으로 더 다양한 연주를 시도해 보세요.", triggerId: "keyboardMappingArea" },
   ];
 
