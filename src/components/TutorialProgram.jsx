@@ -1,3 +1,4 @@
+// src/components/TutorialProgram.jsx
 import React, { useState, useEffect } from 'react';
 
 export default function TutorialProgram() {
@@ -41,7 +42,10 @@ export default function TutorialProgram() {
     if (step === 3) return; // 키보드 입력은 아래 useEffect에서 처리
 
     const { triggerId } = tutorialSteps[step] || {};
-    if (!triggerId) return;
+    if (!triggerId) {
+      markStepAsComplete();
+      return;
+      }
 
     const el = document.getElementById(triggerId);
     if (!el) return;
@@ -85,39 +89,36 @@ export default function TutorialProgram() {
 
   return (
     <div className="w-full space-y-4">
-      <p className="text-lg font-bold text-center">{/*튜토리얼 가이드*/}</p>
-      <p className="text-center pt-[30px] text-[20px]">{tutorialSteps[step].message}</p>
+      <p className="text-lg font-bold">튜토리얼 가이드</p>
+      <p>{tutorialSteps[step].message}</p>
 
-      <div className="w-full rounded-full">
+      <div className="w-full bg-gray-200 rounded-full h-3">
         <div
           className="bg-blue-500 h-3 rounded-full transition-all"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
-      <div className="flex justify-between pt-[30px]">
+      <div className="flex justify-between">
         <button
           onClick={prevStep}
           disabled={step === 0}
           className="px-3 py-1 bg-gray-300 text-sm rounded disabled:opacity-50"
         >
-          ⬅ 이전
+          이전
         </button>
         <button
-          onClick={() => {
-            closeTutorial(); // 튜토리얼 종료 정리
-            window.location.href = 'https://heeouo.github.io/open-daw-melto-Daw/'; // 이후 페이지 이동
-          }}
+          onClick={closeTutorial}
           className="px-3 py-1 bg-red-400 text-white text-sm rounded"
         >
-          ✖ 닫기
+          닫기
         </button>
         <button
           onClick={nextStep}
           disabled={!completed[step] || step === tutorialSteps.length - 1}
           className="px-3 py-1 bg-blue-500 text-white text-sm rounded disabled:opacity-50"
         >
-          다음 ➡
+          다음
         </button>
       </div>
     </div>
