@@ -206,18 +206,20 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
       </button>
 
       {tracks.map(track => (
-        <div key={track.id} className="border border-[#3BA99C] rounded-[10px] p-[3px] space-y-[2px]">
-          <div className="flex items-center space-x-[2px]">
-
+        <div key={track.id} className="border rounded p-3 space-y-2">
+          <div className="flex items-center space-x-2">
+            {/* ▶ Play Track */}
             <button
-              id= "PlayButton"
+              id="PlayButton"
               onClick={() => playTrack(track.id)}
-              className="px-[20px] py-1 bg-purple-600 text-white rounded"
+              className="px-2 py-1 bg-purple-600 text-white rounded"
             >
               ▶ Play Track
             </button>
 
-            <button id = "addInstrumentButton"
+            {/* + (클립 추가) */}
+            <button
+              id="addInstrumentButton"
               onClick={() => addRecordedClip(track.id)}
               disabled={!recordedUrl}
               className="px-2 py-1 bg-green-500 text-white rounded"
@@ -225,21 +227,30 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
               +
             </button>
 
+            {/* 트랙 이름 */}
             <span className="font-semibold">{track.name}</span>
 
-            <button id = "DeleteButton"
+            {/* Delete Track */}
+            <button
+              id="DeleteButton"
               onClick={() => deleteTrack(track.id)}
               className="px-2 py-1 bg-red-500 text-white rounded"
             >
               Delete
             </button>
-            <button id = "LoofButton"
+
+            {/* Loop On/Off 토글 */}
+            <button
+              id="LoopButton"
               onClick={() => toggleLoop(track.id)}
-              className={`px-2 py-1 rounded ${track.loop ? 'bg-[#b8f5f4] text-white' : 'bg-gray-200'}`}
+              className={`px-2 py-1 rounded ${
+                track.loop ? 'bg-green-600 text-white' : 'bg-gray-200'
+              }`}
             >
               {track.loop ? 'Loop On' : 'Loop Off'}
             </button>
 
+            {/* Mix Down 버튼 */}
             <button
               id="MixDownButton"
               onClick={() => mixDownTrack(track.id)}
@@ -248,9 +259,9 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
               Mix Down
             </button>
 
+            {/* 믹스다운된 음원을 버튼 옆에 보여주도록 */}
             {track.mixUrl && (
               <audio
-                id={`DownloadMix-${track.id}`}
                 src={track.mixUrl}
                 controls
                 className="ml-2 w-40"
@@ -258,24 +269,12 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
             )}
           </div>
 
-            <div className="flex items-center space-x-2 ">
-              <label>Volume:</label>
-              <input
-                type="range"
-                min={0} 
-                max={1} 
-                step={0.01}
-                value={track.volume}
-                onChange={e => updateVolume(track.id, e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="relative h-[0px] border border-[#3BA99C]">
+          {/* 타임라인(클립 바) */}
+          <div className="relative h-12 border bg-gray-100">
             {track.clips.map(clip => (
               <div
                 key={clip.id}
-                className="absolute top-0 h-full opacity-75 rounded"
+                className="absolute top-0 h-full bg-blue-400 opacity-75 rounded"
                 style={{
                   left: `${(clip.start / timelineDuration) * 100}%`,
                   width: `${(clip.duration / timelineDuration) * 100}%`,
@@ -284,6 +283,7 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
             ))}
           </div>
 
+          {/* 개별 클립을 audio 컨트롤러로 표시 */}
           {track.clips.map(clip => (
             <audio
               key={clip.id}
