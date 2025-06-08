@@ -1,125 +1,300 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-export default function TutorialProgram() {
-  const tutorialSteps = [
-    { message: "1단계: 악기를 선택하고 연주해 보세요.", triggerId: "pianoButton" },
-    { message: "2단계: 옥타브를 한 단계 올려보세요.", triggerId: "OctaveUp" },
-    { message: "3단계: 녹음 버튼을 눌러보세요.", triggerId: "recordButton" },
-    { message: "4단계: 키보드를 통해 d-s-a-s-d-d-d 순서대로 눌러보세요.", triggerId: null }, // triggerId 없음
-    { message: "5단계: 녹음 중지 버튼을 눌러보세요.", triggerId: "recordButton" },
-    { message: "6단계: 트랙을 추가해 보세요", triggerId: "addTrackButton" },
-    { message: "7단계: + 버튼 눌러 해당 음악을 추가해보세요.", triggerId: "addInstrumentButton" },
-    { message: "8단계: Play Track버튼 눌러 해당 트랙을 들을 수 있습니다", triggerId: "PlayButton" },
-    { message: "9단계: Loop Off를 On으로 바꾸면 해당 음악이 반복됩니다.", triggerId: "LoopButton" },
-    { message: "10단계: 믹스다운 버튼을 눌러 같은 트랙의 음원을 하나의 음원으로 만들 수 있습니다.", triggerId: "MixDownButton" },
-    { message: "11단계: 믹스다운된 음원은 ⋮를 통해 .wav 파일로 다운로드 가능합니다.", triggerId: null },
-    { message: "12단계: 마지막으로 삭제 버튼을 통해 해당 트랙을 삭제할 수 있습니다.", triggerId: "DeleteButton" },
-    { message: "튜토리얼이 완료 되었습니다! 키보드 매핑으로 더 다양한 연주를 시도해 보세요.", triggerId: "keyboardMappingArea" },
-  ];
+export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
+  const [tracks, setTracks] = useState([]);
+  const trackIdRef = useRef(1);
+  const clipIdRef = useRef(1);
+  const audioRefs = useRef({});
 
-  const [step, setStep] = useState(0);
-  const [completed, setCompleted] = useState(Array(tutorialSteps.length).fill(false));
+  //Audio 저장
+  useEffect(() => {
+    const refs = {};
+    tracks.forEach(track => {
+      refs[track.id] = track.clips.map(clip => new Audio(clip.url));
+    });
+    audioRefs.current = refs;
+  }, [tracks]);
 
-  const nextStep = () => {
-    if (completed[step]) {
-      setStep(prev => Math.min(prev + 1, tutorialSteps.length - 1));
-    }
-  };
+  //트랙 전체 재생
+  const playTrack = (trackId) => {
+    const audios = audioRefs.current[trackId];
+    if (!audios) return;
 
-  const prevStep = () => setStep(prev => Math.max(prev - 1, 0));
-  const closeTutorial = () => setStep(-1);
-
-  const markStepAsComplete = () => {
-    setCompleted(prev => {
-      const updated = [...prev];
-      updated[step] = true;
-      return updated;
+    audios.forEach(audio => {
+      audio.currentTime = 0; // 처음부터 재생
+      audio.play();
     });
   };
 
-  useEffect(() => {
-    if (step === 3) return; // 키보드 입력은 아래 useEffect에서 처리
+  // 트랙 추가
+  const addTrack = () => {
+    const id = trackIdRef.current++;
+    setTracks(prev => [
+      ...prev,
+      { id, name: `Track ${id}`, volume: 0.8, clips: [], loop: false },
+    ]);
+  };
 
-    const { triggerId } = tutorialSteps[step] || {};
-    if (!triggerId) return;
+  // 트랙 삭제
+  const deleteTrack = (trackId) => {
+    setTracks(prev => prev.filter(t => t.id !== trackId));
+  };
 
-    const el = document.getElementById(triggerId);
-    if (!el) return;
+  // 볼륨 변경
+  const updateVolume = (trackId, vol) => {
+    setTracks(prev => prev.map(t =>
+      t.id === trackId ? { ...t, volume: parseFloat(vol) } : t
+    ));
+  };
 
-    el.classList.add('ring-4', 'ring-yellow-400', 'ring-offset-2');
+  // 녹음된 URL로 클립 추가
+  const addRecordedClip = (trackId) => {
+    if (!recordedUrl) return;
+    const audio = new Audio(recordedUrl);
+    audio.addEventListener('loadedmetadata', () => {
+      const duration = audio.duration;
+      const clipId = clipIdRef.current++;
+      setTracks(prev => prev.map(t =>
+        t.id === trackId
+          ? { ...t, clips: [...t.clips, { id: clipId, start: 0, duration, url: recordedUrl }] }
+          : t
+      ));
+    });
+  };
 
-    const handleClick = () => markStepAsComplete();
-    el.addEventListener('click', handleClick);
+  // 루프 토글
+  const toggleLoop = (trackId) => {
+    setTracks(prev => prev.map(t =>
+      t.id === trackId ? { ...t, loop: !t.loop } : t
+    ));
+  };
 
-    return () => {
-      el.classList.remove('ring-4', 'ring-yellow-400', 'ring-offset-2');
-      el.removeEventListener('click', handleClick);
-    };
-  }, [step]);
+    // 믹스다운 : OfflineAudioContext를 사용해 해당 트랙에 있는 모든 클립을 합성(mix)한 뒤, 합성된 Buffer를 WAV Blob으로 변환하여 URL을 생성한 뒤에 상태에 저장
+  const mixDownTrack = async (trackId) => {
+    // 1. 믹스할 트랙 정보 가져오기
+    const track = tracks.find(t => t.id === trackId);
+    if (!track || track.clips.length === 0) return;
 
-  useEffect(() => {
-    if (step !== 3) return;
+    try {
+      // 2. 각 클립의 오디오 데이터를 fetch + decode
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const decodedBuffers = await Promise.all(
+        track.clips.map(async clip => {
+          const res = await fetch(clip.url);
+          const arrayBuffer = await res.arrayBuffer();
+          const decoded = await audioContext.decodeAudioData(arrayBuffer);
+          // clip.start는 초 단위 offset (현재 코드는 모두 0으로 고정)
+          return { buffer: decoded, start: clip.start };
+        })
+      );
 
-    const expectedKeys = ['d', 's', 'a', 's', 'd', 'd', 'd'];   // 4단계: d-s-a-s-d-d-d 순서대로 입력 확인
-    let index = 0;
+      // 3. 전체 믹스 길이 계산 (가장 긴 끝나는 시점)
+      let maxDuration = 0;
+      decodedBuffers.forEach(({ buffer, start }) => {
+        const endTime = start + buffer.duration;
+        if (endTime > maxDuration) maxDuration = endTime;
+      });
 
-    const handleKey = (e) => {
-      const key = e.key.toLowerCase();
-      if (key === expectedKeys[index]) {
-        index += 1;
-        if (index === expectedKeys.length) {
-          markStepAsComplete();
-        }
-      } else {
-        index = 0; // 틀리면 처음부터
+      // 4. OfflineAudioContext 생성 (스테레오, sampleRate는 첫 번째 버퍼 기준 사용)
+      const sampleRate = decodedBuffers[0].buffer.sampleRate;
+      const numChannels = decodedBuffers[0].buffer.numberOfChannels;
+      const offlineCtx = new OfflineAudioContext(
+        numChannels,
+        Math.ceil(maxDuration * sampleRate),
+        sampleRate
+      );
+
+      // 5. 각 버퍼를 오프라인 컨텍스트에 BufferSource로 넣고, 시작 시간(start) 설정
+      decodedBuffers.forEach(({ buffer, start }) => {
+        const src = offlineCtx.createBufferSource();
+        src.buffer = buffer;
+        src.connect(offlineCtx.destination);
+        src.start(start);
+      });
+
+      // 6. 렌더링 시작
+      const renderedBuffer = await offlineCtx.startRendering();
+
+      // 7. 렌더링된 AudioBuffer를 WAV 형식의 Blob으로 변환
+      const wavBlob = bufferToWavBlob(renderedBuffer);
+
+      // 8. Blob URL 생성
+      const blobUrl = URL.createObjectURL(wavBlob);
+
+      // 9. 상태에 mixUrl 저장 → 버튼 옆에 <audio>로 렌더링
+      setTracks(prev => prev.map(t =>
+        t.id === trackId
+          ? { ...t, mixUrl: blobUrl }
+          : t
+      ));
+    } catch (err) {
+      console.error('Mixdown failed:', err);
+    }
+  };
+
+  // AudioBuffer → WAV Blob으로 변환하는 헬퍼 함수 (퍼블릭 도메인 또는 MIT 라이선스 예시 코드 참고)
+  const bufferToWavBlob = (buffer) => {
+    const numChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const format = 1; // PCM
+    const bitsPerSample = 16;
+    const blockAlign = numChannels * bitsPerSample / 8;
+    const byteRate = sampleRate * blockAlign;
+    const dataLength = buffer.length * blockAlign;
+    const bufferLength = 44 + dataLength; // WAV 헤더(44바이트) + 데이터
+
+    const wavBuffer = new ArrayBuffer(bufferLength);
+    const view = new DataView(wavBuffer);
+
+    let offset = 0;
+
+    // RIFF chunk descriptor
+    writeString(view, offset, 'RIFF'); offset += 4;
+    view.setUint32(offset, 36 + dataLength, true); offset += 4; // file length - 8
+    writeString(view, offset, 'WAVE'); offset += 4;
+
+    // fmt subchunk
+    writeString(view, offset, 'fmt '); offset += 4;
+    view.setUint32(offset, 16, true); offset += 4; // PCM header size
+    view.setUint16(offset, format, true); offset += 2; // Audio format (1 = PCM)
+    view.setUint16(offset, numChannels, true); offset += 2; // 채널 수
+    view.setUint32(offset, sampleRate, true); offset += 4; // 샘플레이트
+    view.setUint32(offset, byteRate, true); offset += 4; // 바이트레이트
+    view.setUint16(offset, blockAlign, true); offset += 2; // block align
+    view.setUint16(offset, bitsPerSample, true); offset += 2; // 비트 심도
+
+    // data subchunk
+    writeString(view, offset, 'data'); offset += 4;
+    view.setUint32(offset, dataLength, true); offset += 4;
+
+    // 실제 샘플 데이터 (Float → 16-bit PCM)
+    const channelData = [];
+    for (let ch = 0; ch < numChannels; ch++) {
+      channelData.push(buffer.getChannelData(ch));
+    }
+
+    // 인터리브(interleave)
+    let sampleIndex = 0;
+    for (let i = 0; i < buffer.length; i++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        // [-1,1] float → 16-bit signed int
+        let sample = channelData[ch][i];
+        sample = Math.max(-1, Math.min(1, sample));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        offset += 2;
       }
-    };
+      sampleIndex++;
+    }
 
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [step]);
+    return new Blob([view], { type: 'audio/wav' });
+  };
 
-  if (step === -1) return null;
-
-  const progressPercent = ((step + 1) / tutorialSteps.length) * 100;
+  // DataView에 문자열을 쓰는 헬퍼
+  const writeString = (view, offset, str) => {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i));
+    }
+  };
 
   return (
-    <div className="w-full space-y-4">
-      <p className="text-lg font-bold text-center">{/*튜토리얼 가이드*/}</p>
-      <p className="text-center pt-[30px] text-[20px]">{tutorialSteps[step].message}</p>
+    <div className="p-[10px] space-y-[7px]">
+      <button id="addTrackButton"
+        onClick={addTrack}
+        className="px-[30px] py-[10px] bg-blue-600 text-white rounded shadow"
+        >
+        Add Track
+      </button>
 
-      <div className="w-full rounded-full">
-        <div
-          className="bg-blue-500 h-3 rounded-full transition-all"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
+      {tracks.map(track => (
+        <div key={track.id} className="border border-[#3BA99C] rounded-[10px] p-[3px] space-y-[2px]">
+          <div className="flex items-center space-x-[2px]">
 
-      <div className="flex justify-between pt-[30px]">
-        <button
-          onClick={prevStep}
-          disabled={step === 0}
-          className="px-3 py-1 bg-gray-300 text-sm rounded disabled:opacity-50"
-        >
-          ⬅ 이전
-        </button>
-        <button
-          onClick={() => {
-            closeTutorial(); // 튜토리얼 종료 정리
-            window.location.href = 'https://heeouo.github.io/open-daw-melto-Daw/'; // 이후 페이지 이동
-          }}
-          className="px-3 py-1 bg-red-400 text-white text-sm rounded"
-        >
-          ✖ 닫기
-        </button>
-        <button
-          onClick={nextStep}
-          disabled={!completed[step] || step === tutorialSteps.length - 1}
-          className="px-3 py-1 bg-blue-500 text-white text-sm rounded disabled:opacity-50"
-        >
-          다음 ➡
-        </button>
-      </div>
+            <button
+              id= "PlayButton"
+              onClick={() => playTrack(track.id)}
+              className="px-[20px] py-1 bg-purple-600 text-white rounded"
+            >
+              ▶ Play Track
+            </button>
+
+            <button id = "addInstrumentButton"
+              onClick={() => addRecordedClip(track.id)}
+              disabled={!recordedUrl}
+              className="px-2 py-1 bg-green-500 text-white rounded"
+            >
+              +
+            </button>
+
+            <span className="font-semibold">{track.name}</span>
+
+            <button id = "DeleteButton"
+              onClick={() => deleteTrack(track.id)}
+              className="px-2 py-1 bg-red-500 text-white rounded"
+            >
+              Delete
+            </button>
+            <button id = "LoofButton"
+              onClick={() => toggleLoop(track.id)}
+              className={`px-2 py-1 rounded ${track.loop ? 'bg-[#b8f5f4] text-white' : 'bg-gray-200'}`}
+            >
+              {track.loop ? 'Loop On' : 'Loop Off'}
+            </button>
+
+            <button
+              id="MixDownButton"
+              onClick={() => mixDownTrack(track.id)}
+              className="px-2 py-1 bg-indigo-600 text-white rounded"
+            >
+              Mix Down
+            </button>
+
+            {track.mixUrl && (
+              <audio
+                id={`DownloadMix-${track.id}`}
+                src={track.mixUrl}
+                controls
+                className="ml-2 w-40"
+              />
+            )}
+          </div>
+
+            <div className="flex items-center space-x-2 ">
+              <label>Volume:</label>
+              <input
+                type="range"
+                min={0} 
+                max={1} 
+                step={0.01}
+                value={track.volume}
+                onChange={e => updateVolume(track.id, e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="relative h-[0px] border border-[#3BA99C]">
+            {track.clips.map(clip => (
+              <div
+                key={clip.id}
+                className="absolute top-0 h-full opacity-75 rounded"
+                style={{
+                  left: `${(clip.start / timelineDuration) * 100}%`,
+                  width: `${(clip.duration / timelineDuration) * 100}%`,
+                }}
+              />
+            ))}
+          </div>
+
+          {track.clips.map(clip => (
+            <audio
+              key={clip.id}
+              src={clip.url}
+              controls
+              loop={track.loop}
+              className="mt-2 w-full"
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
