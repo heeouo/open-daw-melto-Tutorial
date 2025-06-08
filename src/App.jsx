@@ -38,6 +38,10 @@ function App() {
                 className="text-[#2B2D2E] hover:text-[#248277]">
                 Start
               </a>
+              <a href="https://heeouo.github.io/open-daw-melto/About/about.html" target="_blank" rel="noopener noreferrer"
+                className="text-[#2B2D2E] hover:text-[#248277]">
+                About
+              </a>
             </nav>
           </div>
         </header>
