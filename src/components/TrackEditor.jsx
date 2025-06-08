@@ -1,3 +1,4 @@
+// src/components/TrackEditor.jsx
 import React, { useState, useRef, useEffect } from 'react';
 
 export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
@@ -6,7 +7,7 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
   const clipIdRef = useRef(1);
   const audioRefs = useRef({});
 
-  //Audio 저장
+  // Audio 객체를 refs에 저장 (트랙별 재생용)
   useEffect(() => {
     const refs = {};
     tracks.forEach(track => {
@@ -15,7 +16,7 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
     audioRefs.current = refs;
   }, [tracks]);
 
-  //트랙 전체 재생
+  // 트랙 전체 재생
   const playTrack = (trackId) => {
     const audios = audioRefs.current[trackId];
     if (!audios) return;
@@ -31,20 +32,16 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
     const id = trackIdRef.current++;
     setTracks(prev => [
       ...prev,
-      { id, name: `Track ${id}`, volume: 0.8, clips: [], loop: false },
+      // clips: 오디오 클립 배열
+      // loop: 루프 on/off 상태
+      // mixUrl: 믹스다운된 결과를 저장할 URL (빈 문자열 또는 null이 초기값)
+      { id, name: `Track ${id}`, volume: 0.8, clips: [], loop: false, mixUrl: null },
     ]);
   };
 
   // 트랙 삭제
   const deleteTrack = (trackId) => {
     setTracks(prev => prev.filter(t => t.id !== trackId));
-  };
-
-  // 볼륨 변경
-  const updateVolume = (trackId, vol) => {
-    setTracks(prev => prev.map(t =>
-      t.id === trackId ? { ...t, volume: parseFloat(vol) } : t
-    ));
   };
 
   // 녹음된 URL로 클립 추가
@@ -56,7 +53,13 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
       const clipId = clipIdRef.current++;
       setTracks(prev => prev.map(t =>
         t.id === trackId
-          ? { ...t, clips: [...t.clips, { id: clipId, start: 0, duration, url: recordedUrl }] }
+          ? {
+              ...t,
+              clips: [
+                ...t.clips,
+                { id: clipId, start: 0, duration, url: recordedUrl }
+              ]
+            }
           : t
       ));
     });
@@ -69,7 +72,7 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
     ));
   };
 
-    // 믹스다운 : OfflineAudioContext를 사용해 해당 트랙에 있는 모든 클립을 합성(mix)한 뒤, 합성된 Buffer를 WAV Blob으로 변환하여 URL을 생성한 뒤에 상태에 저장
+  // 믹스다운 : OfflineAudioContext를 사용해 해당 트랙에 있는 모든 클립을 합성(mix)한 뒤, 합성된 Buffer를 WAV Blob으로 변환하여 URL을 생성한 뒤에 상태에 저장
   const mixDownTrack = async (trackId) => {
     // 1. 믹스할 트랙 정보 가져오기
     const track = tracks.find(t => t.id === trackId);
@@ -197,22 +200,23 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
   };
 
   return (
-    <div className="p-[10px] space-y-[7px]">
-      <button id="addTrackButton"
+    <div className="p-[5px] space-y-[7px]">
+      <button
+        id="addTrackButton"
         onClick={addTrack}
         className="px-[30px] py-[10px] bg-blue-600 text-white rounded shadow"
-        >
+      >
         Add Track
       </button>
 
       {tracks.map(track => (
-        <div key={track.id} className="border rounded p-3 space-y-2">
-          <div className="flex items-center space-x-2">
+        <div key={track.id} className="border border-[#3BA99C] rounded-[10px] p-[3px] space-y-[2px]">
+          <div className="flex items-center space-x-[2px]">
             {/* ▶ Play Track */}
             <button
               id="PlayButton"
               onClick={() => playTrack(track.id)}
-              className="px-2 py-1 bg-purple-600 text-white rounded"
+              className="px-[20px] py-1 bg-purple-600 text-white rounded"
             >
               ▶ Play Track
             </button>
@@ -244,7 +248,7 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
               id="LoopButton"
               onClick={() => toggleLoop(track.id)}
               className={`px-2 py-1 rounded ${
-                track.loop ? 'bg-green-600 text-white' : 'bg-gray-200'
+                track.loop ? 'bg-[#b8f5f4] text-white' : 'bg-gray-200'
               }`}
             >
               {track.loop ? 'Loop On' : 'Loop Off'}
@@ -270,7 +274,7 @@ export default function TrackEditor({ recordedUrl, timelineDuration = 30 }) {
           </div>
 
           {/* 타임라인(클립 바) */}
-          <div className="relative h-12 border bg-gray-100">
+          <div className="relative h-[0px] border border-[#3BA99C]">
             {track.clips.map(clip => (
               <div
                 key={clip.id}

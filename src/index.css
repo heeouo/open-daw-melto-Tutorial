@@ -4,7 +4,7 @@
 
 
 :root {
-  font-family: 'Noto Sans KR' /*,system-ui, Avenir, Helvetica, Arial*/, sans-serif;
+  font-family: 'Noto Sans KR', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -52,7 +52,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color:#248277;
+  border-color: #248277;
 }
 button:focus,
 button:focus-visible {

@@ -1,61 +1,43 @@
-// // src/components/KeyboardMapping.jsx
-// import React from 'react';
-// import { keyToNote } from './InstrumentPlayer'; // InstrumentPlayer 에서 export 해둔 매핑 객체
-
-// export default function KeyboardMapping() {
-//   return (
-//     <div className="keyboard-map grid grid-cols-7 gap-2 p-4">
-//       {Object.entries(keyToNote).map(([key, note]) => (
-//         <div
-//           key={key}
-//           className="flex flex-col items-center justify-center border rounded-lg p-2 bg-white shadow"
-//         >
-//           <span className="text-lg font-mono">{key}</span>
-//           <span className="text-sm text-gray-600">{note}</span>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-
-
-
 // src/components/KeyboardMapping.jsx
-import React from 'react';
-
-// 키 맵 오프셋: 키 → 반음 오프셋 (C 기준)
-const keyMapOffsets = {
-  A: 0, W: 1, S: 2, E: 3, D: 4,
-  F: 5, T: 6, G: 7, Y: 8, H: 9,
-  U: 10, J: 11, K: 12,
-};
-const noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const defaultOctave = 4;
-
-// 기본 옥타브(defaultOctave)를 기준으로 keyToNote 맵 생성
-const keyToNote = Object.fromEntries(
-  Object.entries(keyMapOffsets).map(([key, offset]) => {
-    const abs = defaultOctave * 12 + offset;
-    const name = `${noteNames[abs % 12]}${Math.floor(abs / 12)}`;
-    return [key, name];
-  })
-);
+import React, { useEffect, useState } from 'react';
 
 export default function KeyboardMapping() {
+  // 1) instrument 상태: 'piano' 또는 'drum' 디폴트는 Piano로 시작
+  const [instrument, setInstrument] = useState('piano');
+
+  useEffect(() => {
+    // 2) 클릭 이벤트 핸들러: Piano/Drum 버튼 클릭을 감지
+    const handleClick = (e) => {
+      const text = e.target.innerText.trim();
+      if (text === 'Piano') {
+        setInstrument('piano');
+      } else if (text === 'Drum') {
+        setInstrument('drum');
+      }
+    };
+
+    // 3) 마운트 시점에 전역 클릭 리스너 등록
+    window.addEventListener('click', handleClick);
+
+    // 4) 언마운트 시점에 정리
+    return () => {
+      window.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  // 5) instrument 값에 따라 경로 선택
+  const imgSrc =
+    instrument === 'drum'
+      ? './samples/images/drum_mapping.png'
+      : './samples/images/piano_mapping.png';
+
   return (
-    <div className="flex justify-center"> 
-      <div className="grid grid-cols-7 gap-[2px] pt-[40px] min-w-[400px] grid-rows-[min-content_auto_auto_min-content]">
-        {Object.entries(keyToNote).map(([key, note]) => (
-          <div
-            key={key}
-            className="flex flex-col items-center justify-center border rounded-[10px] p-[2px] bg-[#ffffff] shadow"
-          >
-            <span className="text-[18px] font-mono">{key}</span>
-            <span className="text-[14px] text-gray-600">{note}</span>
-          </div>
-        ))}
-      </div>
+    <div className="flex justify-center p-4">
+      <img
+        src={imgSrc}
+        alt={instrument === 'drum' ? 'Drum Mapping' : 'Piano Mapping'}
+        className="max-w-full h-auto rounded shadow"
+      />
     </div>
   );
 }
