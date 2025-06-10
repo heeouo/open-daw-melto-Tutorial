@@ -1,12 +1,48 @@
-# React + Vite
+# Melto
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Melto는 melting melody를 의미하며, 디지털 오디오 워크스테이션(DAW)에 익숙하지 않은 초보자도 음악 제작을 쉽고 재미있게 경험할 수 있도록 설계된 웹사이트입니다.
+<br/>
+간단한 인터페이스와 튜토리얼을 통해 누구나 쉽게 자신의 멜로디를 만들어볼 수 있습니다.
 
-Currently, two official plugins are available:
+접속 주소 : https://heeouo.github.io/open-daw-melto/index.html
+<br/>
+<br/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 개발자
+<hr/>
 
-## Expanding the ESLint configuration
+![개발자](./public/samples/readme_images/readme01.png)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+### 프레임워크
+<hr/>
+
+![프레임워크](./public/samples/readme_images/readme02.png)
+
+
+### 사용된 핵심 오픈소스
+<hr/>
+
+![오픈소스](./public/samples/readme_images/readme03.png)
+
+
+### 프로젝트 소개
+
+![오픈소스](./public/samples/readme_images/readme04.png)
+
+메인화면 우측 상단에서 "Home", "Info", "Start", "About" 메뉴를 확인하세요.
+<br/>
+<br/>
+
+![오픈소스](./public/samples/readme_images/readme05.png)
+
+"Start" 메뉴를 클릭하여 튜토리얼 모드 또는 기본 DAW 기능 중 원하는 모드를 선택하세요.
+<br/>
+<br/>
+
+![오픈소스](./public/samples/readme_images/readme06.png)
+
+키보드로 악기를 연주하고, 원하는 연주를 녹음하여 트랙에 추가하세요.
+<br/>
+완성한 음악은 다운로드하여 개인 컴퓨터에서 자유롭게 감상하실 수 있습니다.
+<br/>
