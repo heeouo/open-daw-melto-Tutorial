@@ -11,7 +11,6 @@ export default function TutorialProgram() {
     { message: "6단계: 트랙을 추가해 보세요", triggerId: "addTrackButton" },
     { message: "7단계: + 버튼 눌러 해당 음악을 추가해보세요.", triggerId: "addInstrumentButton" },
     { message: "8단계: Play Track버튼 눌러 해당 트랙을 들을 수 있습니다", triggerId: "PlayButton" },
-    { message: "9단계: Loop Off를 On으로 바꾸면 해당 음악이 반복됩니다.", triggerId: "LoopButton" },
     { message: "10단계: 믹스다운 버튼을 눌러 같은 트랙의 음원을 하나의 음원으로 만들 수 있습니다.", triggerId: "MixDownButton" }, 
     { message: "11단계: 믹스다운된 음원은 ⋮를 통해 .wav 파일로 다운로드 가능합니다.", triggerId: null },
     { message: "12단계: 마지막으로 삭제 버튼을 통해 해당 트랙을 삭제할 수 있습니다.", triggerId: "DeleteButton" },
@@ -99,7 +98,7 @@ export default function TutorialProgram() {
         />
       </div>
 
-      <div className="flex justify-between ">
+      <div className="flex justify-between">
         <button
           onClick={prevStep}
           disabled={step === 0}
@@ -109,7 +108,7 @@ export default function TutorialProgram() {
         </button>
         <button
           onClick={() => {
-            closeTutorial(); // 튜토리얼 종료 정리
+            closeTutorial(); // 튜토리얼 종료 정리Add commentMore actions
             window.location.href = 'https://heeouo.github.io/open-daw-melto-Daw/'; // 이후 페이지 이동
           }}
           className="px-3 py-1 bg-red-400 text-white text-[14px] rounded"
